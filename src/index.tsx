@@ -1,16 +1,38 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Root from "./Root";
 import { app } from "./firebase";
+import { createGlobalStyle } from "styled-components";
+import reset from "styled-reset";
+import { RouterProvider } from "react-router-dom";
+import router from "./Router";
+import { RecoilRoot } from "recoil";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-console.log(app);
+const GlobalStyle = createGlobalStyle`
+  ${reset}
+  body {  
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: white;
+  }
+  *{
+    box-sizing: border-box;
+  }
+  a{
+    text-decoration: none;
+    color:inherit;
+  }
+`;
 
+console.log(app);
 root.render(
   <React.StrictMode>
-    <Root />
+    <RecoilRoot>
+      <GlobalStyle />
+      <RouterProvider router={router} />
+    </RecoilRoot>
   </React.StrictMode>
 );
