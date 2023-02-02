@@ -9,9 +9,11 @@ function Root() {
   useEffect(() => {
     isLogin === true ? navigate("/home") : navigate("/auth");
   }, []);
+
   return (
     <>
       <Outlet />
+      <footer>&copy; {new Date().getFullYear()} Twitter</footer>
     </>
   );
 }

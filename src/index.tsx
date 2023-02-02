@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { app } from "./firebase";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import { RouterProvider } from "react-router-dom";
@@ -27,7 +26,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-console.log(app);
 root.render(
   <React.StrictMode>
     <RecoilRoot>
