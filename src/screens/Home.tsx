@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useOutletContext } from "react-router-dom";
 import styled from "styled-components";
+import Tweet from "../components/Tweet";
 import { dbService } from "../firebase";
 
 const Wrapper = styled.div``;
@@ -21,6 +22,13 @@ const Input = styled.input``;
 interface IHomeProps {
   userObj: User;
 }
+
+export interface ITweets {
+  createdAt: number;
+  creatorId: string;
+  id: string;
+  text: string;
+}
 export default function Home() {
   const { userObj } = useOutletContext<IHomeProps>();
   const {
@@ -30,7 +38,8 @@ export default function Home() {
     reset,
     formState: { isValid },
   } = useForm({ mode: "onChange" });
-  const [tweets, setTweets] = useState<any[]>([]);
+  const [tweets, setTweets] = useState<ITweets[]>([]);
+  console.log(tweets);
 
   useEffect(() => {
     const q = query(
@@ -38,8 +47,8 @@ export default function Home() {
       orderBy("createdAt", "desc")
     );
     onSnapshot(q, (snapshot) => {
-      const tweetArr = snapshot.docs.map((doc) => ({
-        id: doc.id,
+      const tweetArr: any = snapshot.docs.map((doc) => ({
+        id: doc.id + "",
         ...doc.data(),
       }));
       console.log(tweetArr);
@@ -70,9 +79,11 @@ export default function Home() {
         </Form>
         <div>
           {tweets.map((tweet) => (
-            <div>
-              <h4 key={tweet.id}>{tweet.text}</h4>
-            </div>
+            <Tweet
+              key={tweet.id}
+              tweetObj={tweet}
+              isOwner={tweet.creatorId === userObj.uid}
+            />
           ))}
         </div>
       </Wrapper>
