@@ -1,6 +1,7 @@
+import { User } from "firebase/auth";
 import { atom } from "recoil";
 
-export const loginState = atom({
-  key: "loginState",
-  default: false,
+export const userObjAtom = atom<User | null>({
+  key: "userObj",
+  default: null,
 });
