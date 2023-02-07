@@ -27,10 +27,8 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 root.render(
-  <React.StrictMode>
-    <RecoilRoot>
-      <GlobalStyle />
-      <RouterProvider router={router} />
-    </RecoilRoot>
-  </React.StrictMode>
+  <RecoilRoot>
+    <GlobalStyle />
+    <RouterProvider router={router} />
+  </RecoilRoot>
 );

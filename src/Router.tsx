@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Root from "./Root";
 import Auth from "./screens/Auth";
 import Home from "./screens/Home";
+import Profile from "./screens/Profile";
 
 const router = createBrowserRouter(
   [
@@ -16,6 +17,10 @@ const router = createBrowserRouter(
         {
           path: "auth",
           element: <Auth />,
+        },
+        {
+          path: "profile",
+          element: <Profile />,
         },
       ],
     },

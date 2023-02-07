@@ -1,3 +1,13 @@
+import { authService } from "../firebase";
+
 export default function Profile() {
-  return <h1>Profile</h1>;
+  const onLogOutClick = () => {
+    authService.signOut();
+  };
+  return (
+    <>
+      <h1>Profile</h1>
+      <button onClick={onLogOutClick}>LogOut</button>
+    </>
+  );
 }
