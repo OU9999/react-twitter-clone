@@ -8,15 +8,12 @@ interface ITweetProps {
   tweetObj: ITweets;
   isOwner: boolean;
 }
+
 export default function Tweet({ tweetObj, isOwner }: Partial<ITweetProps>) {
   const [editing, setEditing] = useState(false);
-  const {
-    register,
-    getValues,
-    handleSubmit,
-    reset,
-    formState: { isValid },
-  } = useForm({ mode: "onChange" });
+  const { register, getValues, handleSubmit, reset } = useForm({
+    mode: "onChange",
+  });
   const tweetRef = doc(dbService, "tweets", `${tweetObj?.id}`);
 
   const onDeleteClick = async () => {
@@ -51,6 +48,9 @@ export default function Tweet({ tweetObj, isOwner }: Partial<ITweetProps>) {
         ) : (
           <>
             <h4>{tweetObj?.text}</h4>
+            {tweetObj?.attachmentUrl && (
+              <img src={tweetObj.attachmentUrl} width="50px" height="50px" />
+            )}
             {isOwner && (
               <>
                 <button onClick={onDeleteClick}>Delete Tweet</button>
