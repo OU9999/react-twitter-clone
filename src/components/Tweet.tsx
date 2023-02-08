@@ -1,7 +1,8 @@
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { dbService } from "../firebase";
+import { dbService, storageService } from "../firebase";
 import { ITweets } from "../screens/Home";
 
 interface ITweetProps {
@@ -20,6 +21,7 @@ export default function Tweet({ tweetObj, isOwner }: Partial<ITweetProps>) {
     const ok = window.confirm("진짜 지울거야?");
     if (ok) {
       await deleteDoc(doc(dbService, "tweets", `${tweetObj?.id}`));
+      await deleteObject(ref(storageService, tweetObj?.attachmentUrl));
     }
   };
 
