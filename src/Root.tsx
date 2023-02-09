@@ -3,6 +3,13 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { authService } from "./firebase";
 import Navi from "./components/Navi";
 import { updateCurrentUser, User } from "firebase/auth";
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background-color: ${(props) => props.theme.bgColor};
+`;
 
 function Root() {
   const [init, setInit] = useState(false);
@@ -33,8 +40,10 @@ function Root() {
 
   return (
     <>
-      {isLogin && <Navi userObj={userObj!} />}
-      {init ? <Outlet context={{ userObj, refreshUser }} /> : "init..."}
+      <Wrapper>
+        {isLogin && <Navi userObj={userObj!} />}
+        {init ? <Outlet context={{ userObj, refreshUser }} /> : "init..."}
+      </Wrapper>
     </>
   );
 }

@@ -45,6 +45,8 @@ export default function Profile() {
 
   const onSubmitProfile = async () => {
     const { newName } = getValues();
+    if (newName.length >= 12) {
+    }
     await updateProfile(userObj, {
       displayName: newName,
     });

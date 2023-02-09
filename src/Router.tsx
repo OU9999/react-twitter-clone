@@ -13,6 +13,11 @@ const router = createBrowserRouter(
         {
           path: "home",
           element: <Home />,
+          index: true,
+        },
+        {
+          path: "home/modal",
+          element: <Home />,
         },
         {
           path: "auth",
