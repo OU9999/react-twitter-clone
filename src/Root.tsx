@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { authService } from "./firebase";
 import Navi from "./components/Navi";
-
-import { User } from "firebase/auth";
+import { updateCurrentUser, User } from "firebase/auth";
 
 function Root() {
   const [init, setInit] = useState(false);
@@ -27,11 +26,15 @@ function Root() {
     isLogin === true ? navigate("/home") : navigate("/auth");
   }, [isLogin]);
 
+  const refreshUser = async () => {
+    await updateCurrentUser(authService, authService.currentUser);
+    setUserObj(authService.currentUser);
+  };
+
   return (
     <>
-      {isLogin && <Navi />}
-      {init ? <Outlet context={{ userObj }} /> : "init..."}
-      <footer>&copy; {new Date().getFullYear()} Twitter</footer>
+      {isLogin && <Navi userObj={userObj!} />}
+      {init ? <Outlet context={{ userObj, refreshUser }} /> : "init..."}
     </>
   );
 }

@@ -1,6 +1,17 @@
+import { updateProfile, User } from "firebase/auth";
 import { Link } from "react-router-dom";
 
-export default function Navi() {
+interface INaviProps {
+  userObj: User;
+}
+
+export default function Navi({ userObj }: INaviProps) {
+  if (userObj.displayName === null) {
+    const name = userObj!.email!.split("@")[0];
+    updateProfile(userObj, {
+      displayName: name,
+    });
+  }
   return (
     <nav>
       <ul>
@@ -8,7 +19,7 @@ export default function Navi() {
           <Link to="/home">Home</Link>
         </li>
         <li>
-          <Link to="/profile">Profile</Link>
+          <Link to="/profile">{userObj.displayName}'s Profile</Link>
         </li>
       </ul>
     </nav>

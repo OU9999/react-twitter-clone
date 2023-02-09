@@ -21,7 +21,7 @@ const Form = styled.form``;
 
 const Input = styled.input``;
 
-interface IHomeProps {
+export interface IHomeProps {
   userObj: User;
 }
 
