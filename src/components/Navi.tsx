@@ -35,6 +35,7 @@ const Overlay = styled(motion.div)`
   align-items: center;
   justify-content: center;
   transform-origin: top right;
+  border: 5px solid ${(props) => props.theme.birdColor};
   border-radius: 20px;
 `;
 

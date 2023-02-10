@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { authService } from "../firebase";
+import { theme } from "../theme";
 
 const Wrapper = styled.div`
   display: flex;
@@ -69,7 +70,7 @@ const Buttons = styled.div`
   margin: 25px 0px;
 `;
 
-const Button = styled.button`
+const Button = styled(motion.button)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -80,12 +81,8 @@ const Button = styled.button`
   border-radius: 15px;
   background-color: ${(props) => props.theme.textColor};
   color: ${(props) => props.theme.bgColor};
-  transition: all 0.5s ease-in-out;
   font-weight: bold;
-  &:hover {
-    background-color: ${(props) => props.theme.birdColor};
-    color: ${(props) => props.theme.textColor};
-  }
+  cursor: pointer;
 `;
 
 const Icon = styled(FontAwesomeIcon)`
@@ -266,6 +263,10 @@ export default function Auth() {
               onClick={() => {
                 setNewAccount(false);
               }}
+              whileHover={{
+                backgroundColor: theme.birdColor,
+                color: theme.textColor,
+              }}
             >
               Sign In
             </Button>
@@ -273,6 +274,10 @@ export default function Auth() {
               disabled={isValid ? false : true}
               onClick={() => {
                 setNewAccount(true);
+              }}
+              whileHover={{
+                backgroundColor: theme.birdColor,
+                color: theme.textColor,
               }}
             >
               Create Account
@@ -282,11 +287,25 @@ export default function Auth() {
       </Column>
       <Column>
         <Buttons>
-          <Button name="google" onClick={onSocialClick}>
+          <Button
+            name="google"
+            onClick={onSocialClick}
+            whileHover={{
+              backgroundColor: theme.birdColor,
+              color: theme.textColor,
+            }}
+          >
             <Icon icon={faGoogle} />
             Continue with Google
           </Button>
-          <Button name="github" onClick={onSocialClick}>
+          <Button
+            name="github"
+            onClick={onSocialClick}
+            whileHover={{
+              backgroundColor: theme.birdColor,
+              color: theme.textColor,
+            }}
+          >
             <Icon icon={faGithub} />
             Continue with GitHub
           </Button>

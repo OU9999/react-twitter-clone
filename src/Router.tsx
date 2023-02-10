@@ -20,6 +20,10 @@ const router = createBrowserRouter(
           element: <Home />,
         },
         {
+          path: "home/modal/edit",
+          element: <Home />,
+        },
+        {
           path: "auth",
           element: <Auth />,
         },
