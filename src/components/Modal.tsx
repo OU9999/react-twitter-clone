@@ -175,8 +175,12 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
   const [message, setMessage] = useState<string | null>(null);
   const [isModalEdit, setIsModalEdit] = useRecoilState(modalEdit);
   const tweetUserObj = useRecoilValue(tweetUserObjAtom);
-  const [attachmentEdit, setAttachmentEdit] = useState<string | null>(null);
+  const [attachmentEdit, setAttachmentEdit] = useState<string | null>(
+    tweetUserObj.attachmentUrl
+  );
   const tweetRef = doc(dbService, "tweets", `${tweetUserObj.id}`);
+
+  console.log(userObj);
 
   const onOverlayClick = () => {
     if (isEdit) {
@@ -247,9 +251,10 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
       const uploadFile = files![0];
       const reader = new FileReader();
       reader.onloadend = (finishEvent) => {
-        console.log(finishEvent.target?.result as string);
+        setAttachmentEdit(finishEvent.target?.result as string);
       };
       reader.readAsDataURL(uploadFile);
+      return null;
     }
     if (files) {
       const uploadFile = files![0];
@@ -265,9 +270,19 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
     e.preventDefault();
     console.log("edit button click");
     const { tweet } = getValues();
+    const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+    let getAttachmentUrl = "";
+    if (attachmentEdit) {
+      const response = await uploadString(
+        attachmentRef,
+        attachmentEdit as string,
+        "data_url"
+      );
+      getAttachmentUrl = await getDownloadURL(response.ref);
+    }
     await updateDoc(tweetRef, {
       text: tweet,
-      attachmentUrl: tweetUserObj.attachmentUrl,
+      attachmentUrl: getAttachmentUrl,
     });
     showMessage("수정 완료!");
   };
@@ -297,9 +312,9 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
           />
           <Column>
             {isEdit
-              ? tweetUserObj.attachmentUrl && (
+              ? attachmentEdit && (
                   <AttachmentDiv>
-                    <img src={tweetUserObj.attachmentUrl} />
+                    <img src={attachmentEdit as string} />
                     <ClearButton onClick={onClearAttachmentEdit}>
                       <FontAwesomeIcon icon={faX} />
                     </ClearButton>
@@ -332,7 +347,7 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
             </InputFile>
             {isEdit ? (
               <InputFileButton onClick={onEditButtonClick}>
-                Edit
+                <FontAwesomeIcon icon={faPenToSquare} />
               </InputFileButton>
             ) : isValid ? (
               <InputFileButton type="submit" disabled={isValid ? false : true}>

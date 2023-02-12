@@ -1,5 +1,7 @@
+import { faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { updateProfile, User } from "firebase/auth";
-import { motion, useAnimation, Variants } from "framer-motion";
+import { AnimatePresence, motion, useAnimation, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -39,10 +41,11 @@ const Overlay = styled(motion.div)`
   border-radius: 20px;
 `;
 
-const NavButton = styled.button`
+const NavButton = styled(Link)`
   background-color: ${(props) => props.theme.textColor};
   color: ${(props) => props.theme.bgColor};
   transition: all 0.3s ease-in-out;
+  text-align: center;
   font-weight: bold;
   font-size: 25px;
   padding: 20px;
@@ -51,6 +54,19 @@ const NavButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.birdColor};
     color: ${(props) => props.theme.textColor};
+  }
+`;
+
+const XButtonDiv = styled(motion.div)`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  color: ${(props) => props.theme.bgColor};
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    color: ${(props) => props.theme.birdColor};
   }
 `;
 
@@ -107,12 +123,11 @@ export default function Navi({ userObj }: INaviProps) {
       <UserIcon onClick={onIconClick} />
       <Overlay variants={overlayVar} initial="hidden" animate={overlayAni}>
         <UserIconInside onClick={onIconClick} />
-        <NavButton>
-          <Link to="/home">Home</Link>
-        </NavButton>
-        <NavButton>
-          <Link to="/profile">{userObj.displayName}'s Profile</Link>
-        </NavButton>
+        <NavButton to="/home">Home</NavButton>
+        <NavButton to="/profile">{userObj.displayName}'s Profile</NavButton>
+        <XButtonDiv onClick={onIconClick}>
+          <FontAwesomeIcon icon={faX} />
+        </XButtonDiv>
       </Overlay>
     </>
   );

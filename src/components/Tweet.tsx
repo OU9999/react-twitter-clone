@@ -57,6 +57,7 @@ export default function Tweet({
   const { register, getValues, handleSubmit, reset } = useForm({
     mode: "onChange",
   });
+
   const tweetRef = doc(dbService, "tweets", `${tweetObj?.id}`);
   const [isModalEdit, setIsModalEdit] = useRecoilState(modalEdit);
   const [tweetUserObj, setTweetUserObj] = useRecoilState(tweetUserObjAtom);
