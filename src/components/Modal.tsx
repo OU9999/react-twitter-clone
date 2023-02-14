@@ -19,7 +19,7 @@ const Overlay = styled(motion.div)`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  opacity: 1;
+  opacity: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,6 +29,11 @@ const Overlay = styled(motion.div)`
 const Formdiv = styled.div`
   z-index: 2;
   position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
   width: 70vw;
   height: 80vh;
 `;
@@ -86,6 +91,7 @@ const InputText = styled.textarea`
   font-size: 20px;
   padding: 10px;
   margin-bottom: 10px;
+  resize: none;
 `;
 
 const InputFile = styled.div`
@@ -180,8 +186,6 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
   );
   const tweetRef = doc(dbService, "tweets", `${tweetUserObj.id}`);
 
-  console.log(userObj);
-
   const onOverlayClick = () => {
     if (isEdit) {
       setIsModalEdit(false);
@@ -204,6 +208,12 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
 
   const onSubmit = async () => {
     const { tweet } = getValues();
+    if (tweet.length > 500) {
+      showMessage(
+        `문자는 500글자 이상 쓸 수 없습니다. 현재 문자:(${tweet.length})`
+      );
+      return;
+    }
     const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
     let getAttachmentUrl = "";
     if (attachment) {
@@ -219,6 +229,8 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
       createdAt: Date.now(),
       creatorId: userObj.uid,
       attachmentUrl: getAttachmentUrl,
+      displayName: userObj.displayName,
+      photoUrl: userObj.photoURL,
     });
     reset();
     setAttachment(null);
@@ -268,8 +280,13 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
 
   const onEditButtonClick = async (e: any) => {
     e.preventDefault();
-    console.log("edit button click");
     const { tweet } = getValues();
+    if (tweet.length > 500) {
+      showMessage(
+        `문자는 500글자 이상 쓸 수 없습니다. 현재 문자:(${tweet.length})`
+      );
+      return;
+    }
     const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
     let getAttachmentUrl = "";
     if (attachmentEdit) {

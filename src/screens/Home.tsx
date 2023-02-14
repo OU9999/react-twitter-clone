@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   align-items: center;
   flex-direction: column;
   width: 100vw;
-  height: 100vh;
+  height: auto;
   position: relative;
 `;
 
@@ -35,6 +35,7 @@ const Write = styled(motion.div)`
   width: 400px;
   margin: 10px 0px;
   border-radius: 25px;
+  margin-top: 50px;
   cursor: pointer;
   svg {
     font-size: 100px;
@@ -45,7 +46,7 @@ const TweetsDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 70%;
+  width: 70vw;
 `;
 
 export interface IHomeProps {
@@ -58,6 +59,8 @@ export interface ITweets {
   id: string;
   text: string;
   attachmentUrl: string;
+  displayName: string;
+  photoUrl: string;
 }
 
 export default function Home() {
@@ -91,7 +94,6 @@ export default function Home() {
 
   const onWriteClick = async () => {
     await setGiveLayoutId("new");
-
     navigation("/home/modal");
   };
 

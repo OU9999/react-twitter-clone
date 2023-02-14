@@ -1,12 +1,13 @@
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { updateProfile, User } from "firebase/auth";
-import { AnimatePresence, motion, useAnimation, Variants } from "framer-motion";
+import { motion, useAnimation, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { GUEST_ICON } from "../constants/constant";
 
-const UserIcon = styled.div`
+const UserIcon = styled.div<{ userimg: string }>`
   position: fixed;
   top: 30px;
   right: 30px;
@@ -15,8 +16,18 @@ const UserIcon = styled.div`
   height: 50px;
   border-radius: 50px;
   background-color: ${(props) => props.theme.birdColor};
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
 `;
+
+const UserImg = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+`;
+
 const UserIconInside = styled.div`
   width: 50px;
   height: 50px;
@@ -120,9 +131,18 @@ export default function Navi({ userObj }: INaviProps) {
 
   return (
     <>
-      <UserIcon onClick={onIconClick} />
+      <UserIcon onClick={onIconClick} userimg={userObj.photoURL!}>
+        <UserImg
+          src={userObj.photoURL !== null ? userObj.photoURL : GUEST_ICON}
+        />
+      </UserIcon>
+
       <Overlay variants={overlayVar} initial="hidden" animate={overlayAni}>
-        <UserIconInside onClick={onIconClick} />
+        <UserIconInside onClick={onIconClick}>
+          <UserImg
+            src={userObj.photoURL !== null ? userObj.photoURL : GUEST_ICON}
+          />
+        </UserIconInside>
         <NavButton to="/home">Home</NavButton>
         <NavButton to="/profile">{userObj.displayName}'s Profile</NavButton>
         <XButtonDiv onClick={onIconClick}>
