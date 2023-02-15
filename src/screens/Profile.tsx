@@ -1,27 +1,15 @@
 import { uuidv4 } from "@firebase/util";
-import {
-  faCamera,
-  faPenToSquare,
-  faX,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { updateProfile } from "firebase/auth";
 import {
   collection,
-  deleteDoc,
-  doc,
-  getDocs,
   onSnapshot,
   orderBy,
   query,
   where,
 } from "firebase/firestore";
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadString,
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -29,7 +17,7 @@ import { useMatch, useNavigate, useOutletContext } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { layoutIdAtom, profileEditAtom } from "../atoms";
-import { Modal_Profile } from "../components/Modal";
+import { ModalProfile } from "../components/Modal";
 import Tweet from "../components/Tweet";
 import { GUEST_ICON } from "../constants/constant";
 import { authService, dbService, storageService } from "../firebase";
@@ -235,7 +223,7 @@ export default function Profile() {
   const { refreshUser } = useOutletContext<any>();
   const { register, getValues, handleSubmit } = useForm({
     mode: "onChange",
-    defaultValues: { ["newName"]: userObj.displayName },
+    defaultValues: { newName: userObj.displayName },
   });
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const fileinput = useRef<HTMLInputElement>(null);
@@ -272,6 +260,7 @@ export default function Profile() {
     if (isProfileEdit === true) {
       navigation("/profile/edit");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isProfileEdit]);
 
   const onSubmitProfile = async () => {
@@ -356,7 +345,7 @@ export default function Profile() {
             />
             {photoUrl && (
               <PhotoUrlDiv>
-                <img src={photoUrl} />
+                <img src={photoUrl} alt="pic" />
                 <PhotoDivButton
                   onClick={onClearPhotoUrl}
                   variants={buttonVar}
@@ -392,8 +381,7 @@ export default function Profile() {
         </TweetsDiv>
         <AnimatePresence>
           {profileEditMatch ? (
-            // eslint-disable-next-line react/jsx-pascal-case
-            <Modal_Profile layoutId={giveLayoutId as string} isEdit={true} />
+            <ModalProfile layoutId={giveLayoutId as string} isEdit={true} />
           ) : null}
         </AnimatePresence>
       </Wrapper>

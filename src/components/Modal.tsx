@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { motion, useAnimation, Variants } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -341,7 +341,7 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
             {isEdit
               ? attachmentEdit && (
                   <AttachmentDiv>
-                    <img src={attachmentEdit as string} />
+                    <img src={attachmentEdit as string} alt="pic" />
                     <ClearButton onClick={onClearAttachmentEdit}>
                       <FontAwesomeIcon icon={faX} />
                     </ClearButton>
@@ -350,7 +350,7 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
               : null}
             {attachment && (
               <AttachmentDiv>
-                <img src={attachment} />
+                <img src={attachment} alt="pic" />
                 <ClearButton onClick={onClearAttachment}>
                   <FontAwesomeIcon icon={faX} />
                 </ClearButton>
@@ -392,12 +392,11 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
   );
 }
 
-export function Modal_Profile({ layoutId, isEdit }: IModalProps) {
+export function ModalProfile({ layoutId, isEdit }: IModalProps) {
   const { userObj } = useOutletContext<IHomeProps>();
   const navigation = useNavigate();
   const messageAni = useAnimation();
   const tweetUserObj = useRecoilValue(tweetUserObjAtom);
-  const [attachment, setAttachment] = useState<string | null>();
   const [message, setMessage] = useState<string | null>(null);
   const [attachmentEdit, setAttachmentEdit] = useState<string | null>(
     tweetUserObj.attachmentUrl
@@ -447,8 +446,6 @@ export function Modal_Profile({ layoutId, isEdit }: IModalProps) {
       reader.onloadend = (finishEvent) => {
         if (isEdit) {
           setAttachmentEdit(finishEvent.target?.result as string);
-        } else {
-          setAttachment(finishEvent.target?.result as string);
         }
       };
       reader.readAsDataURL(uploadFile);
@@ -522,7 +519,7 @@ export function Modal_Profile({ layoutId, isEdit }: IModalProps) {
             {isEdit
               ? attachmentEdit && (
                   <AttachmentDiv>
-                    <img src={attachmentEdit as string} />
+                    <img src={attachmentEdit as string} alt="pic" />
                     <ClearButton onClick={onClearAttachmentEdit}>
                       <FontAwesomeIcon icon={faX} />
                     </ClearButton>

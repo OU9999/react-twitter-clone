@@ -123,6 +123,7 @@ export default function Navi({ userObj }: INaviProps) {
     } else {
       overlayAni.start("hidden");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overlayOn]);
 
   const onIconClick = () => {

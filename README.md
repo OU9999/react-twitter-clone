@@ -1,46 +1,54 @@
-# Getting Started with Create React App
+# React Twitter Clone 🦜
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![2](https://user-images.githubusercontent.com/113419018/218963457-078c20bf-1ffe-4c89-8753-ce4f63f35a26.gif)
+![3high](https://user-images.githubusercontent.com/113419018/218963133-e59a7655-9436-4e19-809f-d5075d24ece9.gif)
 
-## Available Scripts
+https://ou9999.github.io/react-twitter-clone
 
-In the project directory, you can run:
+<div align="center">
+	<img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=React&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=TypeScript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=Firebase&logoColor=white" />
+</div>
+<br>
 
-### `npm start`
+### Introduce
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+개발환경
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+    React , TypeScript
 
-### `npm test`
+#### 회원가입,로그인,소셜 로그인 기능 구현
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=Firebase&logoColor=white" /> 를 이용해 서버리스 웹 구현
+- firebase 백엔드로 유저 관리 및 구글과 깃허브를 통한 소셜 로그인 구현
+- 자신의 닉네임,프로필 이미지 변경 가능
+- 자신의 트윗만 삭제,수정 가능
 
-### `npm run build`
+#### FramerMotion으로 부드러운 애니메이션 구현
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- svg 애니메이션 구현
+- 트윗을 작성할때 밋밋한 화면이 아닌 움직이는 반응형으로 구현
+- 에러 메세지 애니메이션 구현
+- nav 팝업 애니메이션 구현
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<hr>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Conclusions
 
-### `npm run eject`
+- 공식문서를 잘 찾게됨 (중요)
+- TS의 타입지정과 자동완성은 너무 편하고 좋은 기능임 큰 프로젝트에 참여한다면 꼭 TS로 할것임
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+<hr>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### ⚙️ Coming Soon... ⚙️
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+README 작성 날짜 : 23.02.15
+DEADLINE : ~~ 23.04.01
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- 반응형 웹 구현 (태블릿,모바일)
+- 코딩 컴포넌트화 (더 빡세게)
+- 각종 버그 테스트 후 수정
+- 디자인 수정
+- 유저 한줄 소개, 배경화면 추가 예정
+- 트위터의 각종 기능들 추가 예중
