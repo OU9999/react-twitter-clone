@@ -11,11 +11,11 @@ const UserIcon = styled.div<{ userimg: string }>`
   position: fixed;
   top: 30px;
   right: 30px;
-  z-index: 99;
+  z-index: 97;
   width: 50px;
   height: 50px;
   border-radius: 50px;
-  background-color: ${(props) => props.theme.birdColor};
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,12 +32,12 @@ const UserIconInside = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 50px;
-  background-color: ${(props) => props.theme.birdColor};
+
   cursor: pointer;
 `;
 
 const Overlay = styled(motion.div)`
-  z-index: 99;
+  z-index: 96;
   position: fixed;
   top: 100px;
   right: 50px;

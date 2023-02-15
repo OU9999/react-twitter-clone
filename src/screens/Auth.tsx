@@ -201,8 +201,6 @@ export default function Auth() {
     console.log(data);
   };
 
-  console.log(errors);
-
   return (
     <Wrapper>
       <Column>

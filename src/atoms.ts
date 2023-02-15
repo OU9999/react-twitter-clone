@@ -5,6 +5,11 @@ export const modalEdit = atom<boolean>({
   default: false,
 });
 
+export const profileEditAtom = atom<boolean>({
+  key: "profileEdit",
+  default: false,
+});
+
 export interface ITweetUserObj {
   id: string;
   attachmentUrl: string | null;

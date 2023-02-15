@@ -1,17 +1,35 @@
 import { uuidv4 } from "@firebase/util";
-import { faCamera, faX } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCamera,
+  faPenToSquare,
+  faX,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { updateProfile } from "firebase/auth";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadString,
+} from "firebase/storage";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMatch, useOutletContext } from "react-router-dom";
+import { useMatch, useNavigate, useOutletContext } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { layoutIdAtom } from "../atoms";
-import Modal from "../components/Modal";
+import { layoutIdAtom, profileEditAtom } from "../atoms";
+import { Modal_Profile } from "../components/Modal";
 import Tweet from "../components/Tweet";
 import { GUEST_ICON } from "../constants/constant";
 import { authService, dbService, storageService } from "../firebase";
@@ -39,7 +57,7 @@ const ProfileDiv = styled.div`
   overflow: hidden;
 `;
 
-const Profile__img__column = styled.div`
+const ProfileImgColumn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -147,6 +165,7 @@ const TweetsDiv = styled.div`
   background-color: ${(props) => props.theme.textColor};
   border-radius: 25px;
   padding: 20px;
+  overflow-x: hidden;
   overflow-y: scroll;
 `;
 
@@ -164,6 +183,39 @@ const Hrdiv = styled.div`
 `;
 
 const Tweets = styled.div``;
+
+const TweetLine = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const InputFileButtonX = styled.button`
+  background-color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.bgColor};
+  transition: all 0.3s ease-in-out;
+  font-weight: bold;
+  font-size: 25px;
+  padding: 20px;
+  width: 20px;
+  height: 20px;
+  border: 3px solid gray;
+  border-radius: 10px;
+  margin: 10px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+  cursor: pointer;
+`;
+
+const InputFileButton = styled(InputFileButtonX)`
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.birdColor};
+    color: ${(props) => props.theme.textColor};
+  }
+`;
 
 const buttonVar: Variants = {
   normal: {
@@ -187,7 +239,11 @@ export default function Profile() {
   });
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const fileinput = useRef<HTMLInputElement>(null);
-  const [docs, setDocs] = useState<any[]>([]);
+  const [tweets, setTweets] = useState<ITweets[]>([]);
+  const profileEditMatch = useMatch("/profile/edit");
+  const [giveLayoutId, setGiveLayoutId] = useRecoilState(layoutIdAtom);
+  const navigation = useNavigate();
+  const [isProfileEdit, setIsProfileEdit] = useRecoilState(profileEditAtom);
 
   const onLogOutClick = () => {
     authService.signOut();
@@ -199,17 +255,24 @@ export default function Profile() {
       where("creatorId", "==", userObj.uid),
       orderBy("createdAt", "desc")
     );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-      setDocs((prev: ITweets | any) => [...prev, doc.data()]);
+    onSnapshot(q, (snapshot) => {
+      const tweetArr: any = snapshot.docs.map((doc) => ({
+        id: doc.id + "",
+        ...doc.data(),
+      }));
+      setTweets(tweetArr);
     });
-    console.log(docs);
   };
 
   useEffect(() => {
     getMyTweets();
   }, []);
+
+  useEffect(() => {
+    if (isProfileEdit === true) {
+      navigation("/profile/edit");
+    }
+  }, [isProfileEdit]);
 
   const onSubmitProfile = async () => {
     const { newName } = getValues();
@@ -267,14 +330,14 @@ export default function Profile() {
     <>
       <Wrapper>
         <ProfileDiv>
-          <Profile__img__column>
+          <ProfileImgColumn>
             <ProfileImg
               src={userObj.photoURL !== null ? userObj.photoURL : GUEST_ICON}
             />
             <ProfileImgChange onClick={onClickImageUpload}>
               <FontAwesomeIcon icon={faCamera} />
             </ProfileImgChange>
-          </Profile__img__column>
+          </ProfileImgColumn>
           <ProfileTitle>{userObj.displayName}</ProfileTitle>
           <Hrdiv />
           <ProfileForm onSubmit={handleSubmit(onSubmitProfile)}>
@@ -314,19 +377,25 @@ export default function Profile() {
           <TweetName>{userObj.displayName}'s Tweet</TweetName>
           <Hrdiv />
           <Tweets>
-            <div>
-              {docs.map((doc) => (
+            {tweets.map((tweet, index) => (
+              <TweetLine>
                 <Tweet
-                  key={doc.id}
-                  tweetObj={doc}
-                  isOwner={doc.creatorId === userObj.uid}
-                  layoutId={doc.id as string}
+                  key={index}
+                  tweetObj={tweet}
+                  isOwner={tweet.creatorId === userObj.uid}
+                  layoutId={tweet.id as string}
                   isProfile={true}
                 />
-              ))}
-            </div>
+              </TweetLine>
+            ))}
           </Tweets>
         </TweetsDiv>
+        <AnimatePresence>
+          {profileEditMatch ? (
+            // eslint-disable-next-line react/jsx-pascal-case
+            <Modal_Profile layoutId={giveLayoutId as string} isEdit={true} />
+          ) : null}
+        </AnimatePresence>
       </Wrapper>
     </>
   );

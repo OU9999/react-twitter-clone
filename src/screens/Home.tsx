@@ -102,7 +102,7 @@ export default function Home() {
       <Wrapper>
         <Write
           onClick={onWriteClick}
-          layoutId={giveLayoutId as string}
+          layoutId="new"
           whileHover={{
             backgroundColor: theme.birdColor,
             color: theme.textColor,

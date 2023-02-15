@@ -1,6 +1,9 @@
+import { faPenToSquare, faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { deleteDoc, doc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
 import { PathMatch, useMatch, useNavigate } from "react-router-dom";
 import ReactTextareaAutosize from "react-textarea-autosize";
 import { useRecoilState } from "recoil";
@@ -9,6 +12,7 @@ import {
   ITweetUserObj,
   layoutIdAtom,
   modalEdit,
+  profileEditAtom,
   tweetUserObjAtom,
 } from "../atoms";
 import { GUEST_ICON } from "../constants/constant";
@@ -106,11 +110,39 @@ const TweetButton = styled(motion.button)`
   cursor: pointer;
 `;
 
+const InputFileButtonX = styled.button`
+  background-color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.bgColor};
+  transition: all 0.3s ease-in-out;
+  font-weight: bold;
+  font-size: 25px;
+  padding: 20px;
+  width: 20px;
+  height: 20px;
+  border: 3px solid gray;
+  border-radius: 10px;
+  margin: 10px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+  cursor: pointer;
+`;
+
+const InputFileButton = styled(InputFileButtonX)`
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.birdColor};
+    color: ${(props) => props.theme.textColor};
+  }
+`;
+
 interface ITweetProps {
   tweetObj: ITweets;
   isOwner: boolean;
   layoutId: string;
   isProfile: boolean;
+  first?: boolean | null;
 }
 
 export default function Tweet({
@@ -118,17 +150,19 @@ export default function Tweet({
   isOwner,
   layoutId,
   isProfile,
+  first,
 }: Partial<ITweetProps>) {
   const tweetRef = doc(dbService, "tweets", `${tweetObj?.id}`);
   const [isModalEdit, setIsModalEdit] = useRecoilState(modalEdit);
   const [tweetUserObj, setTweetUserObj] = useRecoilState(tweetUserObjAtom);
   const [giveLayoutId, setGiveLayoutId] = useRecoilState(layoutIdAtom);
+  const [isProfileEdit, setIsProfileEdit] = useRecoilState(profileEditAtom);
 
   const onDeleteClick = async () => {
     const ok = window.confirm("진짜 지울거야?");
     if (ok) {
       await deleteDoc(doc(dbService, "tweets", `${tweetObj?.id}`));
-      await deleteObject(ref(storageService, tweetObj?.attachmentUrl));
+      await deleteObject(ref(storageService, tweetObj?.attachmentUrl!));
     }
   };
 
@@ -138,57 +172,76 @@ export default function Tweet({
     setIsModalEdit(true);
   };
 
-  console.log(tweetObj?.photoUrl);
+  const onProfileEditClick = async () => {
+    await setTweetUserObj(tweetObj as ITweetUserObj);
+    await setGiveLayoutId(layoutId!);
+    setIsProfileEdit(true);
+  };
+
   return (
     <>
-      <TweetDiv layoutId={layoutId}>
-        <TweetUserImg
-          src={tweetObj?.photoUrl !== null ? tweetObj?.photoUrl : GUEST_ICON}
-        />
-        <TweetColumn>
-          <TweetUserInfo>
-            <TweetUserName>{tweetObj?.displayName}</TweetUserName>
-            {tweetObj?.createdAt && (
-              <TweetDate>{dateFormatter(tweetObj.createdAt)}</TweetDate>
-            )}
-          </TweetUserInfo>
+      {first ? null : (
+        <>
+          <TweetDiv layoutId={layoutId}>
+            <TweetUserImg
+              src={
+                tweetObj?.photoUrl !== null ? tweetObj?.photoUrl : GUEST_ICON
+              }
+            />
+            <TweetColumn>
+              <TweetUserInfo>
+                <TweetUserName>{tweetObj?.displayName}</TweetUserName>
+                {tweetObj?.createdAt && (
+                  <TweetDate>{dateFormatter(tweetObj.createdAt)}</TweetDate>
+                )}
+              </TweetUserInfo>
 
-          <TweetArea>
-            <TweetTextArea autoFocus disabled>
-              {tweetObj?.text}
-            </TweetTextArea>
-            {tweetObj?.attachmentUrl && (
-              <TweetImg src={tweetObj.attachmentUrl} />
-            )}
-          </TweetArea>
-        </TweetColumn>
-        <Buttons>
-          {isProfile
-            ? null
-            : isOwner && (
-                <>
-                  <TweetButton
-                    onClick={onDeleteClick}
-                    whileHover={{
-                      backgroundColor: theme.birdColor,
-                      color: theme.textColor,
-                    }}
-                  >
-                    삭제
-                  </TweetButton>
-                  <TweetButton
-                    onClick={onEditClick}
-                    whileHover={{
-                      backgroundColor: theme.birdColor,
-                      color: theme.textColor,
-                    }}
-                  >
-                    수정
-                  </TweetButton>
-                </>
-              )}
-        </Buttons>
-      </TweetDiv>
+              <TweetArea>
+                <TweetTextArea autoFocus disabled value={tweetObj?.text!} />
+                {tweetObj?.attachmentUrl && (
+                  <TweetImg src={tweetObj.attachmentUrl} />
+                )}
+              </TweetArea>
+            </TweetColumn>
+            <Buttons>
+              {isProfile
+                ? null
+                : isOwner && (
+                    <>
+                      <TweetButton
+                        onClick={onDeleteClick}
+                        whileHover={{
+                          backgroundColor: theme.birdColor,
+                          color: theme.textColor,
+                        }}
+                      >
+                        삭제
+                      </TweetButton>
+                      <TweetButton
+                        onClick={onEditClick}
+                        whileHover={{
+                          backgroundColor: theme.birdColor,
+                          color: theme.textColor,
+                        }}
+                      >
+                        수정
+                      </TweetButton>
+                    </>
+                  )}
+            </Buttons>
+          </TweetDiv>
+          {isProfile ? (
+            <>
+              <InputFileButton onClick={onProfileEditClick}>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </InputFileButton>
+              <InputFileButton onClick={onDeleteClick}>
+                <FontAwesomeIcon icon={faX} />
+              </InputFileButton>
+            </>
+          ) : null}
+        </>
+      )}
     </>
   );
 }

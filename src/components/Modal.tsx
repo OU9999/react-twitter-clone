@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { motion, useAnimation, Variants } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { modalEdit, tweetUserObjAtom } from "../atoms";
+import { modalEdit, profileEditAtom, tweetUserObjAtom } from "../atoms";
 import { dbService, storageService } from "../firebase";
 import { IHomeProps } from "../screens/Home";
 
@@ -23,11 +23,11 @@ const Overlay = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
+  z-index: 98;
 `;
 
 const Formdiv = styled.div`
-  z-index: 2;
+  z-index: 99;
   position: fixed;
   top: 0;
   left: 0;
@@ -117,6 +117,7 @@ const AttachmentDiv = styled.div`
   img {
     width: 70px;
     height: 70px;
+    border-radius: 8px;
   }
 `;
 
@@ -173,17 +174,17 @@ interface IModalProps {
 }
 
 export default function Modal({ layoutId, isEdit }: IModalProps) {
-  const navigation = useNavigate();
-  const [attachment, setAttachment] = useState<string | null>();
   const { userObj } = useOutletContext<IHomeProps>();
-  const fileinput = useRef<HTMLInputElement>(null);
+  const navigation = useNavigate();
   const messageAni = useAnimation();
-  const [message, setMessage] = useState<string | null>(null);
   const [isModalEdit, setIsModalEdit] = useRecoilState(modalEdit);
   const tweetUserObj = useRecoilValue(tweetUserObjAtom);
+  const [attachment, setAttachment] = useState<string | null>();
+  const [message, setMessage] = useState<string | null>(null);
   const [attachmentEdit, setAttachmentEdit] = useState<string | null>(
     tweetUserObj.attachmentUrl
   );
+  const fileinput = useRef<HTMLInputElement>(null);
   const tweetRef = doc(dbService, "tweets", `${tweetUserObj.id}`);
 
   const onOverlayClick = () => {
@@ -259,28 +260,21 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
   const onFileChange = ({
     currentTarget: { files },
   }: React.FormEvent<HTMLInputElement>) => {
-    if (isEdit) {
-      const uploadFile = files![0];
-      const reader = new FileReader();
-      reader.onloadend = (finishEvent) => {
-        setAttachmentEdit(finishEvent.target?.result as string);
-      };
-      reader.readAsDataURL(uploadFile);
-      return null;
-    }
     if (files) {
       const uploadFile = files![0];
       const reader = new FileReader();
       reader.onloadend = (finishEvent) => {
-        setAttachment(finishEvent.target?.result as string);
+        if (isEdit) {
+          setAttachmentEdit(finishEvent.target?.result as string);
+        } else {
+          setAttachment(finishEvent.target?.result as string);
+        }
       };
       reader.readAsDataURL(uploadFile);
     }
   };
 
-  const onEditButtonClick = async (e: any) => {
-    e.preventDefault();
-    const { tweet } = getValues();
+  const updateTweet = async (tweet: string) => {
     if (tweet.length > 500) {
       showMessage(
         `문자는 500글자 이상 쓸 수 없습니다. 현재 문자:(${tweet.length})`
@@ -290,6 +284,15 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
     const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
     let getAttachmentUrl = "";
     if (attachmentEdit) {
+      if (attachmentEdit.includes("https:")) {
+        await updateDoc(tweetRef, {
+          text: tweet,
+          attachmentUrl: attachmentEdit,
+          createdAt: Date.now(),
+        });
+        showMessage("수정 완료!");
+        return;
+      }
       const response = await uploadString(
         attachmentRef,
         attachmentEdit as string,
@@ -300,8 +303,15 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
     await updateDoc(tweetRef, {
       text: tweet,
       attachmentUrl: getAttachmentUrl,
+      createdAt: Date.now(),
     });
     showMessage("수정 완료!");
+  };
+
+  const onEditButtonClick = async (e: any) => {
+    e.preventDefault();
+    const { tweet } = getValues();
+    updateTweet(tweet);
   };
 
   return (
@@ -346,6 +356,179 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
                 </ClearButton>
               </AttachmentDiv>
             )}
+
+            <InputFile>
+              <SubmitSpan variants={SubmitSpanVar} animate={messageAni}>
+                {message}
+              </SubmitSpan>
+              <InputFileButton onClick={onClickImageUpload}>
+                <FontAwesomeIcon icon={faImage} />
+              </InputFileButton>
+              <input
+                type="file"
+                onChange={onFileChange}
+                accept="image/*"
+                ref={fileinput}
+                style={{ display: "none" }}
+              />
+            </InputFile>
+            {isEdit ? (
+              <InputFileButton onClick={onEditButtonClick}>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </InputFileButton>
+            ) : isValid ? (
+              <InputFileButton type="submit" disabled={isValid ? false : true}>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </InputFileButton>
+            ) : (
+              <InputFileButtonX onClick={onXClick}>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </InputFileButtonX>
+            )}
+          </Column>
+        </Form>
+      </Formdiv>
+    </>
+  );
+}
+
+export function Modal_Profile({ layoutId, isEdit }: IModalProps) {
+  const { userObj } = useOutletContext<IHomeProps>();
+  const navigation = useNavigate();
+  const messageAni = useAnimation();
+  const tweetUserObj = useRecoilValue(tweetUserObjAtom);
+  const [attachment, setAttachment] = useState<string | null>();
+  const [message, setMessage] = useState<string | null>(null);
+  const [attachmentEdit, setAttachmentEdit] = useState<string | null>(
+    tweetUserObj.attachmentUrl
+  );
+  const fileinput = useRef<HTMLInputElement>(null);
+  const tweetRef = doc(dbService, "tweets", `${tweetUserObj.id}`);
+  const [isProfileEdit, setIsProfileEdit] = useRecoilState(profileEditAtom);
+
+  const onOverlayClick = () => {
+    if (isEdit) {
+      setIsProfileEdit(false);
+    }
+    navigation("/profile");
+  };
+
+  const {
+    register,
+    getValues,
+    formState: { isValid },
+  } = useForm({ mode: "onChange" });
+
+  const showMessage = (text: string) => {
+    setMessage(text);
+    messageAni.start("start");
+  };
+
+  const onXClick = () => {
+    showMessage("텍스트는 최소 1자 이상 써야합니다.");
+  };
+
+  const onClearAttachmentEdit = (e: any) => {
+    e.preventDefault();
+    setAttachmentEdit(null);
+  };
+
+  const onClickImageUpload = (e: any) => {
+    e.preventDefault();
+    fileinput?.current?.click();
+  };
+
+  const onFileChange = ({
+    currentTarget: { files },
+  }: React.FormEvent<HTMLInputElement>) => {
+    if (files) {
+      const uploadFile = files![0];
+      const reader = new FileReader();
+      reader.onloadend = (finishEvent) => {
+        if (isEdit) {
+          setAttachmentEdit(finishEvent.target?.result as string);
+        } else {
+          setAttachment(finishEvent.target?.result as string);
+        }
+      };
+      reader.readAsDataURL(uploadFile);
+    }
+  };
+
+  const updateTweet = async (tweet: string) => {
+    if (tweet.length > 500) {
+      showMessage(
+        `문자는 500글자 이상 쓸 수 없습니다. 현재 문자:(${tweet.length})`
+      );
+      return;
+    }
+    const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+    let getAttachmentUrl = "";
+    if (attachmentEdit) {
+      if (attachmentEdit.includes("https:")) {
+        await updateDoc(tweetRef, {
+          text: tweet,
+          attachmentUrl: attachmentEdit,
+          createdAt: Date.now(),
+        });
+        showMessage("수정 완료!");
+        return;
+      }
+      const response = await uploadString(
+        attachmentRef,
+        attachmentEdit as string,
+        "data_url"
+      );
+      getAttachmentUrl = await getDownloadURL(response.ref);
+    }
+    await updateDoc(tweetRef, {
+      text: tweet,
+      attachmentUrl: getAttachmentUrl,
+      createdAt: Date.now(),
+    });
+    showMessage("수정 완료!");
+  };
+
+  const onEditButtonClick = async (e: any) => {
+    e.preventDefault();
+    const { tweet } = getValues();
+    updateTweet(tweet);
+  };
+
+  return (
+    <>
+      <Overlay
+        onClick={onOverlayClick}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      />
+      <Formdiv>
+        <Form layoutId={layoutId}>
+          <FormColumn>
+            <UserName>{userObj.displayName}'s Tweet</UserName>
+            <ExitButton onClick={onOverlayClick}>
+              <FontAwesomeIcon icon={faX} />
+            </ExitButton>
+          </FormColumn>
+          <Hrdiv />
+          <InputText
+            {...register("tweet", {
+              required: "텍스트는 빈칸으로 올릴수 없습니다.",
+            })}
+            defaultValue={isEdit ? tweetUserObj.text : ""}
+          />
+          <Column>
+            {isEdit
+              ? attachmentEdit && (
+                  <AttachmentDiv>
+                    <img src={attachmentEdit as string} />
+                    <ClearButton onClick={onClearAttachmentEdit}>
+                      <FontAwesomeIcon icon={faX} />
+                    </ClearButton>
+                  </AttachmentDiv>
+                )
+              : null}
 
             <InputFile>
               <SubmitSpan variants={SubmitSpanVar} animate={messageAni}>
