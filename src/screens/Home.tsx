@@ -55,6 +55,7 @@ const TweetsDiv = styled.div`
   justify-content: center;
   align-items: center;
   width: 70vw;
+  margin-right: 15px;
 `;
 
 export interface IHomeProps {

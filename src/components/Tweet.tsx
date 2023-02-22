@@ -91,6 +91,8 @@ const TweetArea = styled.div`
   @media screen and (max-width: 767px) {
     font-size: 1rem;
     width: 60vw;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 `;
 
@@ -106,13 +108,19 @@ const TweetTextArea = styled(ReactTextareaAutosize)`
   resize: none;
   font-size: 1.5rem;
   -webkit-tap-highlight-color: transparent;
-  ::placeholder {
-    color: black;
-  }
   @media screen and (max-width: 767px) {
     font-size: 1.5rem;
     color: black;
   }
+`;
+
+const MobileTweetTextArea = styled.span`
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 1.3rem;
 `;
 
 const TweetImg = styled.img`
@@ -237,12 +245,18 @@ export default function Tweet({
               </TweetUserInfo>
 
               <TweetArea>
-                <TweetTextArea
-                  autoFocus
-                  disabled
-                  value={tweetObj?.text!}
-                  color="black"
-                />
+                {isMobile ? (
+                  <MobileTweetTextArea style={{ textAlign: "left" }}>
+                    {tweetObj?.text!}
+                  </MobileTweetTextArea>
+                ) : (
+                  <TweetTextArea
+                    autoFocus
+                    disabled
+                    value={tweetObj?.text!}
+                    color="black"
+                  />
+                )}
                 {tweetObj?.attachmentUrl && (
                   <TweetImg src={tweetObj.attachmentUrl} />
                 )}
