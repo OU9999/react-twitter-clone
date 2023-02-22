@@ -5,7 +5,7 @@ import reset from "styled-reset";
 import { RouterProvider } from "react-router-dom";
 import router from "./Router";
 import { RecoilRoot } from "recoil";
-import { theme } from "./theme";
+import { theme } from "./utils/themes/theme";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

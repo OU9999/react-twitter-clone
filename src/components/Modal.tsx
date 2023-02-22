@@ -10,9 +10,10 @@ import { useMediaQuery } from "react-responsive";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { modalEdit, profileEditAtom, tweetUserObjAtom } from "../atoms";
-import { dbService, storageService } from "../firebase";
+import { modalEdit, profileEditAtom, tweetUserObjAtom } from "../utils/atoms";
+
 import { IHomeProps } from "../screens/Home";
+import { dbService, storageService } from "../utils/firebase";
 
 const Overlay = styled(motion.div)`
   position: fixed;

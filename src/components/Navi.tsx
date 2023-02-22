@@ -5,7 +5,7 @@ import { motion, useAnimation, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { GUEST_ICON } from "../constants/constant";
+import { GUEST_ICON } from "../utils/constant";
 
 const UserIcon = styled.div<{ userimg: string }>`
   position: fixed;

@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import { useMatch, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import Tweet from "../components/Tweet";
-import { dbService } from "../firebase";
+
 import { AnimatePresence, motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { theme } from "../theme";
+import { theme } from "../utils/themes/theme";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import Modal from "../components/Modal";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { layoutIdAtom, modalEdit } from "../atoms";
+import { layoutIdAtom, modalEdit } from "../utils/atoms";
+import { dbService } from "../utils/firebase";
 
 const Wrapper = styled.div`
   display: flex;

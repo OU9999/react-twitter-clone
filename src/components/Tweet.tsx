@@ -13,12 +13,13 @@ import {
   modalEdit,
   profileEditAtom,
   tweetUserObjAtom,
-} from "../atoms";
-import { GUEST_ICON } from "../constants/constant";
-import { dbService, storageService } from "../firebase";
+} from "../utils/atoms";
+import { GUEST_ICON } from "../utils/constant";
+
 import { ITweets } from "../screens/Home";
-import { theme } from "../theme";
-import { dateFormatter } from "../utils";
+import { theme } from "../utils/themes/theme";
+import { dateFormatter } from "../utils/utils";
+import { dbService, storageService } from "../utils/firebase";
 
 const TweetDiv = styled(motion.div)`
   display: flex;

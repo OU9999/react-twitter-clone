@@ -11,8 +11,9 @@ import { motion } from "framer-motion";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import { authService } from "../firebase";
-import { theme } from "../theme";
+
+import { theme } from "../utils/themes/theme";
+import { authService } from "../utils/firebase";
 
 const Wrapper = styled.div`
   display: flex;

@@ -17,12 +17,13 @@ import { useMediaQuery } from "react-responsive";
 import { useMatch, useNavigate, useOutletContext } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { layoutIdAtom, profileEditAtom } from "../atoms";
+import { layoutIdAtom, profileEditAtom } from "../utils/atoms";
 import { ModalProfile } from "../components/Modal";
 import Tweet from "../components/Tweet";
-import { GUEST_ICON } from "../constants/constant";
-import { authService, dbService, storageService } from "../firebase";
+import { GUEST_ICON } from "../utils/constant";
+
 import { IHomeProps, ITweets } from "./Home";
+import { authService, dbService, storageService } from "../utils/firebase";
 
 const Wrapper = styled.div`
   display: flex;

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { authService } from "./firebase";
+
 import Navi from "./components/Navi";
 import { updateCurrentUser, User } from "firebase/auth";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { motion } from "framer-motion";
+import { authService } from "./utils/firebase";
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -23,16 +24,16 @@ const Div = styled(motion.div)`
   font-size: 10rem;
 `;
 
-function Root() {
+export default function Root() {
   const [init, setInit] = useState(false);
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
   const [userObj, setUserObj] = useState<User | null>(null);
 
-  function setScreenSize() {
+  const setScreenSize = () => {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`); //"--vh"라는 속성으로 정의해준다.
-  }
+  };
   window.addEventListener("resize", () => setScreenSize());
 
   useEffect(() => {
@@ -72,5 +73,3 @@ function Root() {
     </>
   );
 }
-
-export default Root;
