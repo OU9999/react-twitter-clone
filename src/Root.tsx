@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 
 const Wrapper = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   background-color: ${(props) => props.theme.bgColor};
 `;
 
@@ -20,7 +20,7 @@ const Div = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 200px;
+  font-size: 10rem;
 `;
 
 function Root() {
@@ -28,6 +28,12 @@ function Root() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
   const [userObj, setUserObj] = useState<User | null>(null);
+
+  function setScreenSize() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`); //"--vh"라는 속성으로 정의해준다.
+  }
+  window.addEventListener("resize", () => setScreenSize());
 
   useEffect(() => {
     authService.onAuthStateChanged((user) => {

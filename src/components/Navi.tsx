@@ -50,6 +50,10 @@ const Overlay = styled(motion.div)`
   transform-origin: top right;
   border: 5px solid ${(props) => props.theme.birdColor};
   border-radius: 20px;
+  @media screen and (max-width: 767px) {
+    width: 200px;
+    height: 300px;
+  }
 `;
 
 const NavButton = styled(Link)`
@@ -65,6 +69,9 @@ const NavButton = styled(Link)`
   &:hover {
     background-color: ${(props) => props.theme.birdColor};
     color: ${(props) => props.theme.textColor};
+  }
+  @media screen and (max-width: 767px) {
+    font-size: 1rem;
   }
 `;
 

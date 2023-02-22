@@ -1,3 +1,5 @@
+import { useMediaQuery } from "react-responsive";
+
 export const dateFormatter = (time: number | Date) => {
   const oldYear = new Date(time).getFullYear();
   const nowYear = new Date(Date.now()).getFullYear();

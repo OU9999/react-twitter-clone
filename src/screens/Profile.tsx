@@ -13,6 +13,7 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useMediaQuery } from "react-responsive";
 import { useMatch, useNavigate, useOutletContext } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
@@ -30,6 +31,10 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   color: ${(props) => props.theme.bgColor};
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+    height: auto;
+  }
 `;
 
 const ProfileDiv = styled.div`
@@ -43,6 +48,11 @@ const ProfileDiv = styled.div`
   border-radius: 25px;
   padding: 20px;
   overflow: hidden;
+  @media screen and (max-width: 767px) {
+    margin: 1rem 0rem;
+    width: 80%;
+    height: 700px;
+  }
 `;
 
 const ProfileImgColumn = styled.div`
@@ -68,6 +78,14 @@ const ProfileImgChange = styled.button`
   border: 1px solid black;
   border-radius: 50%;
   cursor: pointer;
+  @media screen and (max-width: 767px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 5px;
+    height: 40px;
+    color: black;
+  }
 `;
 
 const ProfileTitle = styled.h1`
@@ -97,6 +115,15 @@ const InputText = styled.input`
   border-radius: 10px;
 `;
 
+const UpdateDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: 25vh;
+`;
+
 const PhotoUrlDiv = styled.div`
   margin-top: 10px;
   display: flex;
@@ -105,10 +132,17 @@ const PhotoUrlDiv = styled.div`
   border: 3px solid gray;
   border-radius: 10px;
   padding: 10px;
+  width: 50%;
   img {
     width: 75px;
     height: 75px;
     border-radius: 50%;
+  }
+  @media screen and (max-width: 767px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 30px;
   }
 `;
 
@@ -155,11 +189,19 @@ const TweetsDiv = styled.div`
   padding: 20px;
   overflow-x: hidden;
   overflow-y: scroll;
+  @media screen and (max-width: 767px) {
+    margin: 1rem 0rem;
+    width: 80%;
+    height: 50%;
+  }
 `;
 
 const TweetName = styled.span`
   font-size: 50px;
   color: ${(props) => props.theme.bgColor};
+  @media screen and (max-width: 767px) {
+    font-size: 1.3rem;
+  }
 `;
 
 const Hrdiv = styled.div`
@@ -170,7 +212,11 @@ const Hrdiv = styled.div`
   margin-bottom: 30px;
 `;
 
-const Tweets = styled.div``;
+const Tweets = styled.div`
+  @media screen and (max-width: 767px) {
+    background-color: black;
+  }
+`;
 
 const TweetLine = styled.div`
   display: flex;
@@ -205,6 +251,32 @@ const InputFileButton = styled(InputFileButtonX)`
   }
 `;
 
+const MobileTweetsDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  border-top: 3px solid white;
+  padding-top: 30px;
+`;
+
+const MobileTweetName = styled.h1`
+  font-size: 1.8rem;
+  background-color: ${(props) => props.theme.textColor};
+  padding: 10px;
+  border-radius: 30px;
+  margin-bottom: 20px;
+`;
+
+const MobileTweets = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
 const buttonVar: Variants = {
   normal: {
     color: "#e74c3c",
@@ -232,6 +304,9 @@ export default function Profile() {
   const [giveLayoutId, setGiveLayoutId] = useRecoilState(layoutIdAtom);
   const navigation = useNavigate();
   const [isProfileEdit, setIsProfileEdit] = useRecoilState(profileEditAtom);
+  const isMobile: boolean = useMediaQuery({
+    maxWidth: 767,
+  });
 
   const onLogOutClick = () => {
     authService.signOut();
@@ -343,42 +418,63 @@ export default function Profile() {
               ref={fileinput}
               style={{ display: "none" }}
             />
-            {photoUrl && (
-              <PhotoUrlDiv>
-                <img src={photoUrl} alt="pic" />
-                <PhotoDivButton
-                  onClick={onClearPhotoUrl}
-                  variants={buttonVar}
-                  whileHover="active"
-                  initial="normal"
-                >
-                  <FontAwesomeIcon icon={faX} />
-                </PhotoDivButton>
-              </PhotoUrlDiv>
-            )}
-            <Buttons>
-              <Button>Update User</Button>
-              <Button onClick={onLogOutClick}>LogOut</Button>
-            </Buttons>
+            <UpdateDiv>
+              {photoUrl && (
+                <PhotoUrlDiv>
+                  <img src={photoUrl} alt="pic" />
+                  <PhotoDivButton
+                    onClick={onClearPhotoUrl}
+                    variants={buttonVar}
+                    whileHover="active"
+                    initial="normal"
+                  >
+                    <FontAwesomeIcon icon={faX} />
+                  </PhotoDivButton>
+                </PhotoUrlDiv>
+              )}
+              <Buttons>
+                <Button>Update User</Button>
+                <Button onClick={onLogOutClick}>LogOut</Button>
+              </Buttons>
+            </UpdateDiv>
           </ProfileForm>
         </ProfileDiv>
-        <TweetsDiv>
-          <TweetName>{userObj.displayName}'s Tweet</TweetName>
-          <Hrdiv />
-          <Tweets>
-            {tweets.map((tweet, index) => (
-              <TweetLine>
-                <Tweet
-                  key={index}
-                  tweetObj={tweet}
-                  isOwner={tweet.creatorId === userObj.uid}
-                  layoutId={tweet.id as string}
-                  isProfile={true}
-                />
-              </TweetLine>
-            ))}
-          </Tweets>
-        </TweetsDiv>
+        {isMobile ? (
+          <MobileTweetsDiv>
+            <MobileTweetName>{userObj.displayName}'s Tweet</MobileTweetName>
+            <MobileTweets>
+              {tweets.map((tweet, index) => (
+                <>
+                  <Tweet
+                    key={index}
+                    tweetObj={tweet}
+                    isOwner={tweet.creatorId === userObj.uid}
+                    layoutId={tweet.id as string}
+                    isProfile={true}
+                  />
+                </>
+              ))}
+            </MobileTweets>
+          </MobileTweetsDiv>
+        ) : (
+          <TweetsDiv>
+            <TweetName>{userObj.displayName}'s Tweet</TweetName>
+            <Hrdiv />
+            <Tweets>
+              {tweets.map((tweet, index) => (
+                <TweetLine>
+                  <Tweet
+                    key={index}
+                    tweetObj={tweet}
+                    isOwner={tweet.creatorId === userObj.uid}
+                    layoutId={tweet.id as string}
+                    isProfile={true}
+                  />
+                </TweetLine>
+              ))}
+            </Tweets>
+          </TweetsDiv>
+        )}
         <AnimatePresence>
           {profileEditMatch ? (
             <ModalProfile layoutId={giveLayoutId as string} isEdit={true} />

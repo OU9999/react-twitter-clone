@@ -19,8 +19,8 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 `;
 
 const Column = styled.div`
@@ -30,9 +30,9 @@ const Column = styled.div`
 `;
 
 const Svg = styled(motion.svg)`
-  width: 150px;
-  height: 150px;
-  margin-bottom: 20px;
+  width: 20vw;
+  height: 20vh;
+  margin-bottom: 2rem;
   /* color: ${(props) => props.theme.birdColor}; */
 `;
 
@@ -47,13 +47,18 @@ const Input = styled.input`
   background-color: ${(props) => props.theme.textColor};
   border: none;
   margin-bottom: 1.5vh;
-  width: 500px;
-  height: 50px;
-  font-size: 20px;
+  width: 55vw;
+  height: 10vh;
+  font-size: 1rem;
   padding: 20px;
   border-radius: 10px;
   &:focus {
     background-color: white;
+  }
+  @media screen and (max-width: 767px) {
+    width: 80vw;
+    height: 8vh;
+    font-size: 1rem;
   }
 `;
 
@@ -66,27 +71,35 @@ const Buttons = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 700px;
-  margin: 25px 0px;
+  width: 70vw;
+  margin: 1rem 0px;
 `;
 
 const Button = styled(motion.button)`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 280px;
-  height: 75px;
-  font-size: 25px;
+  width: 20vw;
+  height: 10vh;
+  font-size: 1.5rem;
   padding: 20px;
   border-radius: 15px;
   background-color: ${(props) => props.theme.textColor};
   color: ${(props) => props.theme.bgColor};
   font-weight: bold;
   cursor: pointer;
+  @media screen and (max-width: 767px) {
+    width: 30vw;
+    height: 10vh;
+    font-size: 1rem;
+  }
 `;
 
 const Icon = styled(FontAwesomeIcon)`
-  font-size: 50px;
+  font-size: 3rem;
+  @media screen and (max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 interface IAuthForm {

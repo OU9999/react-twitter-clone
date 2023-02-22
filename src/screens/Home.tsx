@@ -18,7 +18,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 100vw;
+  width: 100%;
   height: auto;
   position: relative;
 `;
@@ -32,13 +32,21 @@ const Write = styled(motion.div)`
   font-weight: bold;
   font-size: 50px;
   padding: 20px;
-  width: 400px;
+  width: 35vw;
   margin: 10px 0px;
-  border-radius: 25px;
+  border-radius: 1.3rem;
   margin-top: 50px;
   cursor: pointer;
   svg {
     font-size: 100px;
+  }
+  @media screen and (max-width: 767px) {
+    width: 50vw;
+    height: 8vh;
+    font-size: 1rem;
+    svg {
+      font-size: 3rem;
+    }
   }
 `;
 

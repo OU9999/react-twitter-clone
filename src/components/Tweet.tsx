@@ -2,9 +2,8 @@ import { faPenToSquare, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { deleteDoc, doc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect } from "react";
-import { PathMatch, useMatch, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useMediaQuery } from "react-responsive";
 import ReactTextareaAutosize from "react-textarea-autosize";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
@@ -20,7 +19,6 @@ import { dbService, storageService } from "../firebase";
 import { ITweets } from "../screens/Home";
 import { theme } from "../theme";
 import { dateFormatter } from "../utils";
-import Modal from "./Modal";
 
 const TweetDiv = styled(motion.div)`
   display: flex;
@@ -28,37 +26,53 @@ const TweetDiv = styled(motion.div)`
   align-items: flex-start;
   background-color: ${(props) => props.theme.textColor};
   color: ${(props) => props.theme.bgColor};
-  padding: 20px;
+  padding: 1.1rem;
   border: 3px solid black;
-  border-radius: 25px;
+  border-radius: 1rem;
   margin: 10px;
   width: 100%;
   box-sizing: border-box;
   position: relative;
+  @media screen and (max-width: 767px) {
+    justify-content: flex-start;
+    font-size: 1px;
+    padding: 0.5rem;
+  }
 `;
 
 const TweetUserImg = styled.img`
-  width: 75px;
-  height: 75px;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 50%;
-  margin-right: 15px;
+  margin-right: 1.5rem;
+  @media screen and (max-width: 767px) {
+    width: 3rem;
+    height: 3rem;
+    margin-right: 10px;
+  }
 `;
 
 const TweetUserInfo = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 0.9rem;
 `;
 
 const TweetUserName = styled.span`
   font-weight: bold;
   margin-right: 10px;
+  @media screen and (max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 const TweetDate = styled.span`
   font-weight: 100;
   color: gray;
+  @media screen and (max-width: 767px) {
+    font-size: 0.7rem;
+  }
 `;
 
 const TweetColumn = styled.div`
@@ -73,7 +87,11 @@ const TweetArea = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 500px;
+  width: 35vw;
+  @media screen and (max-width: 767px) {
+    font-size: 1rem;
+    width: 60vw;
+  }
 `;
 
 const TweetTextArea = styled(ReactTextareaAutosize)`
@@ -86,10 +104,20 @@ const TweetTextArea = styled(ReactTextareaAutosize)`
   border: none;
   color: black;
   resize: none;
+  font-size: 1.5rem;
+  -webkit-tap-highlight-color: transparent;
+  ::placeholder {
+    color: black;
+  }
+  @media screen and (max-width: 767px) {
+    font-size: 1.5rem;
+    color: black;
+  }
 `;
 
 const TweetImg = styled.img`
   width: 100%;
+  height: auto;
   border-radius: 20px;
 `;
 
@@ -100,6 +128,10 @@ const Buttons = styled.div`
   position: absolute;
   top: 10px;
   right: 10px;
+  @media screen and (max-width: 767px) {
+    font-size: 1rem;
+    justify-content: flex-end;
+  }
 `;
 
 const TweetButton = styled(motion.button)`
@@ -108,6 +140,11 @@ const TweetButton = styled(motion.button)`
   border-radius: 5px;
   margin-right: 3px;
   cursor: pointer;
+  @media screen and (max-width: 767px) {
+    margin-right: 0.2 rem;
+    padding: 2px;
+    font-size: 15px;
+  }
 `;
 
 const InputFileButtonX = styled.button`
@@ -157,6 +194,9 @@ export default function Tweet({
   const [tweetUserObj, setTweetUserObj] = useRecoilState(tweetUserObjAtom);
   const [giveLayoutId, setGiveLayoutId] = useRecoilState(layoutIdAtom);
   const [isProfileEdit, setIsProfileEdit] = useRecoilState(profileEditAtom);
+  const isMobile: boolean = useMediaQuery({
+    maxWidth: 767,
+  });
 
   const onDeleteClick = async () => {
     const ok = window.confirm("진짜 지울거야?");
@@ -197,7 +237,12 @@ export default function Tweet({
               </TweetUserInfo>
 
               <TweetArea>
-                <TweetTextArea autoFocus disabled value={tweetObj?.text!} />
+                <TweetTextArea
+                  autoFocus
+                  disabled
+                  value={tweetObj?.text!}
+                  color="black"
+                />
                 {tweetObj?.attachmentUrl && (
                   <TweetImg src={tweetObj.attachmentUrl} />
                 )}
@@ -228,18 +273,44 @@ export default function Tweet({
                       </TweetButton>
                     </>
                   )}
+              {isProfile
+                ? isMobile && (
+                    <>
+                      <TweetButton
+                        onClick={onDeleteClick}
+                        whileHover={{
+                          backgroundColor: theme.birdColor,
+                          color: theme.textColor,
+                        }}
+                      >
+                        삭제
+                      </TweetButton>
+                      <TweetButton
+                        onClick={onProfileEditClick}
+                        whileHover={{
+                          backgroundColor: theme.birdColor,
+                          color: theme.textColor,
+                        }}
+                      >
+                        수정
+                      </TweetButton>
+                    </>
+                  )
+                : null}
             </Buttons>
           </TweetDiv>
-          {isProfile ? (
-            <>
-              <InputFileButton onClick={onProfileEditClick}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </InputFileButton>
-              <InputFileButton onClick={onDeleteClick}>
-                <FontAwesomeIcon icon={faX} />
-              </InputFileButton>
-            </>
-          ) : null}
+          {isProfile
+            ? !isMobile && (
+                <>
+                  <InputFileButton onClick={onProfileEditClick}>
+                    <FontAwesomeIcon icon={faPenToSquare} />
+                  </InputFileButton>
+                  <InputFileButton onClick={onDeleteClick}>
+                    <FontAwesomeIcon icon={faX} />
+                  </InputFileButton>
+                </>
+              )
+            : null}
         </>
       )}
     </>

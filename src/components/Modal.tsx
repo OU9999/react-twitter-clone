@@ -6,6 +6,7 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { motion, useAnimation, Variants } from "framer-motion";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useMediaQuery } from "react-responsive";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -36,6 +37,10 @@ const Formdiv = styled.div`
   margin: auto;
   width: 70vw;
   height: 80vh;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    height: 550px;
+  }
 `;
 
 const Form = styled(motion.form)`
@@ -61,6 +66,10 @@ const UserName = styled.span`
   margin-left: 25px;
   font-size: 50px;
   color: ${(props) => props.theme.bgColor};
+  @media screen and (max-width: 767px) {
+    font-size: 1rem;
+    margin: 30px 0px 30px 25px;
+  }
 `;
 
 const ExitButton = styled.span`
@@ -82,6 +91,9 @@ const Hrdiv = styled.div`
   background-color: gray;
   margin-top: 10px;
   margin-bottom: 30px;
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
 `;
 
 const InputText = styled.textarea`
@@ -92,6 +104,9 @@ const InputText = styled.textarea`
   padding: 10px;
   margin-bottom: 10px;
   resize: none;
+  @media screen and (max-width: 767px) {
+    height: 500px;
+  }
 `;
 
 const InputFile = styled.div`
@@ -104,9 +119,40 @@ const InputFile = styled.div`
 const Column = styled.div`
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-around;
   align-items: center;
   padding: 0px 50px;
+  @media screen and (max-width: 767px) {
+    padding: 0px 0px;
+  }
+`;
+
+const MobileDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    flex-direction: column;
+  }
+`;
+
+const ButtonDiv = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 50%;
+  &:first-child {
+    justify-content: flex-start;
+  }
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    margin-left: 15px;
+    margin-bottom: 15px;
+  }
+`;
+
+const ButtonInsideDiv = styled.div`
+  display: flex;
 `;
 
 const AttachmentDiv = styled.div`
@@ -138,6 +184,12 @@ const InputFileButtonX = styled.button`
   align-items: center;
   margin-left: 10px;
   cursor: pointer;
+  @media screen and (max-width: 767px) {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.5rem;
+  }
 `;
 
 const InputFileButton = styled(InputFileButtonX)`
@@ -154,13 +206,21 @@ const ClearButton = styled(InputFileButton)`
   font-size: 20px;
 `;
 
-const SubmitSpan = styled(motion.span)`
+const SubmitSpan = styled(motion.div)`
+  text-align: center;
   background-color: ${(props) => props.theme.birdColor};
   color: ${(props) => props.theme.textColor};
-  font-size: 25px;
+  font-size: 20px;
   padding: 10px;
   border-radius: 15px;
   opacity: 0;
+  @media screen and (max-width: 767px) {
+    padding: 0.5rem;
+    font-size: 1.5rem;
+    border-radius: 0.5rem;
+    margin-right: 10px;
+    width: 100%;
+  }
 `;
 
 const SubmitSpanVar: Variants = {
@@ -186,6 +246,9 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
   );
   const fileinput = useRef<HTMLInputElement>(null);
   const tweetRef = doc(dbService, "tweets", `${tweetUserObj.id}`);
+  const isMobile: boolean = useMediaQuery({
+    maxWidth: 767,
+  });
 
   const onOverlayClick = () => {
     if (isEdit) {
@@ -323,7 +386,10 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
         exit={{ opacity: 0 }}
       />
       <Formdiv>
-        <Form onSubmit={handleSubmit(onSubmit)} layoutId={layoutId}>
+        <Form
+          onSubmit={handleSubmit(onSubmit)}
+          layoutId={isMobile ? "mobile" : layoutId}
+        >
           <FormColumn>
             <UserName>{userObj.displayName}'s Tweet</UserName>
             <ExitButton onClick={onOverlayClick}>
@@ -338,53 +404,64 @@ export default function Modal({ layoutId, isEdit }: IModalProps) {
             defaultValue={isEdit ? tweetUserObj.text : ""}
           />
           <Column>
-            {isEdit
-              ? attachmentEdit && (
-                  <AttachmentDiv>
-                    <img src={attachmentEdit as string} alt="pic" />
-                    <ClearButton onClick={onClearAttachmentEdit}>
-                      <FontAwesomeIcon icon={faX} />
-                    </ClearButton>
-                  </AttachmentDiv>
-                )
-              : null}
-            {attachment && (
-              <AttachmentDiv>
-                <img src={attachment} alt="pic" />
-                <ClearButton onClick={onClearAttachment}>
-                  <FontAwesomeIcon icon={faX} />
-                </ClearButton>
-              </AttachmentDiv>
-            )}
+            <ButtonDiv>
+              {isEdit
+                ? attachmentEdit && (
+                    <AttachmentDiv>
+                      <img src={attachmentEdit as string} alt="pic" />
+                      <ClearButton onClick={onClearAttachmentEdit}>
+                        <FontAwesomeIcon icon={faX} />
+                      </ClearButton>
+                    </AttachmentDiv>
+                  )
+                : null}
+              {attachment && (
+                <AttachmentDiv>
+                  <img src={attachment} alt="pic" />
+                  <ClearButton onClick={onClearAttachment}>
+                    <FontAwesomeIcon icon={faX} />
+                  </ClearButton>
+                </AttachmentDiv>
+              )}
+            </ButtonDiv>
 
-            <InputFile>
-              <SubmitSpan variants={SubmitSpanVar} animate={messageAni}>
-                {message}
-              </SubmitSpan>
-              <InputFileButton onClick={onClickImageUpload}>
-                <FontAwesomeIcon icon={faImage} />
-              </InputFileButton>
-              <input
-                type="file"
-                onChange={onFileChange}
-                accept="image/*"
-                ref={fileinput}
-                style={{ display: "none" }}
-              />
-            </InputFile>
-            {isEdit ? (
-              <InputFileButton onClick={onEditButtonClick}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </InputFileButton>
-            ) : isValid ? (
-              <InputFileButton type="submit" disabled={isValid ? false : true}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </InputFileButton>
-            ) : (
-              <InputFileButtonX onClick={onXClick}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </InputFileButtonX>
-            )}
+            <ButtonDiv>
+              <MobileDiv>
+                <SubmitSpan variants={SubmitSpanVar} animate={messageAni}>
+                  {message}
+                </SubmitSpan>
+                <ButtonInsideDiv>
+                  <InputFile>
+                    <InputFileButton onClick={onClickImageUpload}>
+                      <FontAwesomeIcon icon={faImage} />
+                    </InputFileButton>
+                    <input
+                      type="file"
+                      onChange={onFileChange}
+                      accept="image/*"
+                      ref={fileinput}
+                      style={{ display: "none" }}
+                    />
+                  </InputFile>
+                  {isEdit ? (
+                    <InputFileButton onClick={onEditButtonClick}>
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                    </InputFileButton>
+                  ) : isValid ? (
+                    <InputFileButton
+                      type="submit"
+                      disabled={isValid ? false : true}
+                    >
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                    </InputFileButton>
+                  ) : (
+                    <InputFileButtonX onClick={onXClick}>
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                    </InputFileButtonX>
+                  )}
+                </ButtonInsideDiv>
+              </MobileDiv>
+            </ButtonDiv>
           </Column>
         </Form>
       </Formdiv>
@@ -404,6 +481,9 @@ export function ModalProfile({ layoutId, isEdit }: IModalProps) {
   const fileinput = useRef<HTMLInputElement>(null);
   const tweetRef = doc(dbService, "tweets", `${tweetUserObj.id}`);
   const [isProfileEdit, setIsProfileEdit] = useRecoilState(profileEditAtom);
+  const isMobile: boolean = useMediaQuery({
+    maxWidth: 767,
+  });
 
   const onOverlayClick = () => {
     if (isEdit) {
@@ -501,7 +581,7 @@ export function ModalProfile({ layoutId, isEdit }: IModalProps) {
         exit={{ opacity: 0 }}
       />
       <Formdiv>
-        <Form layoutId={layoutId}>
+        <Form layoutId={isMobile ? "mobile" : layoutId}>
           <FormColumn>
             <UserName>{userObj.displayName}'s Tweet</UserName>
             <ExitButton onClick={onOverlayClick}>
@@ -516,45 +596,55 @@ export function ModalProfile({ layoutId, isEdit }: IModalProps) {
             defaultValue={isEdit ? tweetUserObj.text : ""}
           />
           <Column>
-            {isEdit
-              ? attachmentEdit && (
-                  <AttachmentDiv>
-                    <img src={attachmentEdit as string} alt="pic" />
-                    <ClearButton onClick={onClearAttachmentEdit}>
-                      <FontAwesomeIcon icon={faX} />
-                    </ClearButton>
-                  </AttachmentDiv>
-                )
-              : null}
-
-            <InputFile>
-              <SubmitSpan variants={SubmitSpanVar} animate={messageAni}>
-                {message}
-              </SubmitSpan>
-              <InputFileButton onClick={onClickImageUpload}>
-                <FontAwesomeIcon icon={faImage} />
-              </InputFileButton>
-              <input
-                type="file"
-                onChange={onFileChange}
-                accept="image/*"
-                ref={fileinput}
-                style={{ display: "none" }}
-              />
-            </InputFile>
-            {isEdit ? (
-              <InputFileButton onClick={onEditButtonClick}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </InputFileButton>
-            ) : isValid ? (
-              <InputFileButton type="submit" disabled={isValid ? false : true}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </InputFileButton>
-            ) : (
-              <InputFileButtonX onClick={onXClick}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </InputFileButtonX>
-            )}
+            <ButtonDiv>
+              {isEdit
+                ? attachmentEdit && (
+                    <AttachmentDiv>
+                      <img src={attachmentEdit as string} alt="pic" />
+                      <ClearButton onClick={onClearAttachmentEdit}>
+                        <FontAwesomeIcon icon={faX} />
+                      </ClearButton>
+                    </AttachmentDiv>
+                  )
+                : null}
+            </ButtonDiv>
+            <ButtonDiv>
+              <MobileDiv>
+                <SubmitSpan variants={SubmitSpanVar} animate={messageAni}>
+                  {message}
+                </SubmitSpan>
+                <ButtonInsideDiv>
+                  <InputFile>
+                    <InputFileButton onClick={onClickImageUpload}>
+                      <FontAwesomeIcon icon={faImage} />
+                    </InputFileButton>
+                    <input
+                      type="file"
+                      onChange={onFileChange}
+                      accept="image/*"
+                      ref={fileinput}
+                      style={{ display: "none" }}
+                    />
+                  </InputFile>
+                  {isEdit ? (
+                    <InputFileButton onClick={onEditButtonClick}>
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                    </InputFileButton>
+                  ) : isValid ? (
+                    <InputFileButton
+                      type="submit"
+                      disabled={isValid ? false : true}
+                    >
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                    </InputFileButton>
+                  ) : (
+                    <InputFileButtonX onClick={onXClick}>
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                    </InputFileButtonX>
+                  )}
+                </ButtonInsideDiv>
+              </MobileDiv>
+            </ButtonDiv>
           </Column>
         </Form>
       </Formdiv>
